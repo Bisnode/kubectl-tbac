@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "Bisnode/kubectl-tbac/cmd"
+import "github.com/mdanielolsson/kubectl-tbac/cmd"
 
 func main() {
 	cmd.Execute()

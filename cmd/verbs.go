@@ -60,8 +60,8 @@ var createCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(patchCmd)
 	rootCmd.AddCommand(getCmd)
-	rootCmd.AddCommand(deleteCmd)
-	rootCmd.AddCommand(createCmd)
 }

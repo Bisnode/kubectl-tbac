@@ -16,11 +16,13 @@ limitations under the License.
 package cmd
 
 import (
-	"Bisnode/kubectl-tbac/util"
 	"fmt"
+	"os"
 
+	"github.com/mdanielolsson/kubectl-tbac/util"
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
 // deleteSecretCmd represents the deleteSecret command
@@ -41,29 +43,24 @@ kubectl tbac delete secret my-secret"
 kubectl tbac delete secret my-secret --namespace team-platform"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		deleteSecret(args)
+		clientSet, err := util.CreateClientSet()
+		if err != nil {
+			fmt.Printf("Failed to create clientSet: %v\n", err)
+			os.Exit(1)
+		}
+		DeleteSecret(clientSet, args[0])
 	},
 }
 
-func deleteSecret(args []string) (err error) {
-	secretName := &args[0]
-	clientset, err := util.CreateClientSet()
-	if err != nil {
-		fmt.Printf("Failed to create client set: %v\n", err.Error())
-		return err
-	}
-
+// DeleteSecret deletes a secret based on secret name
+func DeleteSecret(clientSet kubernetes.Interface, secretName string) (err error) {
 	// Delete the secret
-	if err := clientset.
-		CoreV1().
-		Secrets(namespace).
-		Delete(*secretName, &metav1.DeleteOptions{}); err != nil {
-		fmt.Printf("Error deleting resource in namespace %v: %v\n", namespace, err.Error())
-		return err
+	if err := clientSet.CoreV1().Secrets(Namespace).Delete(secretName, &metav1.DeleteOptions{}); err != nil {
+		fmt.Printf("Error deleting resource in namespace %v: %v\n", Namespace, err.Error())
+		return fmt.Errorf(Namespace)
 	}
-
-	fmt.Printf("Deleted secret/%v in namespace %v\n", *secretName, namespace)
-	return
+	fmt.Printf("Deleted secret/%v in namespace %v\n", secretName, Namespace)
+	return nil
 }
 
 func init() {

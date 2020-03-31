@@ -16,13 +16,15 @@ limitations under the License.
 package cmd
 
 import (
-	"Bisnode/kubectl-tbac/util"
 	"encoding/json"
 	"fmt"
+	"os"
 
+	"github.com/mdanielolsson/kubectl-tbac/util"
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes"
 )
 
 var removeData []string
@@ -49,23 +51,21 @@ kubectl tbac patch secret my-secret --namespace team-platform -d "USER=foo" -d "
 kubectl tbac patch secret my-secret --remove-data USERNAME --remove-data PASSWORD
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := patchSecret(cmd, args); err != nil {
+		clientSet, err := util.CreateClientSet()
+		if err != nil {
+			fmt.Printf("Failed to create clientSet: %v\n", err)
+			os.Exit(1)
+		}
+		if err := PatchSecret(clientSet, &args[0], removeData, data); err != nil {
 			fmt.Println(err)
 		}
 	},
 }
 
-func patchSecret(cmd *cobra.Command, args []string) (err error) {
-	secretName := &args[0]
+// PatchSecret updates an already existing secret with patched content.
+func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData, updateData []string) (err error) {
+	secretsClient := clientSet.CoreV1().Secrets(Namespace)
 
-	// Create secrets client
-	clientset, err := util.CreateClientSet()
-	if err != nil {
-		return err
-	}
-	secretsClient := clientset.CoreV1().Secrets(namespace)
-
-	// Get current secret
 	originalSecret, err := secretsClient.Get(*secretName, metav1.GetOptions{})
 	if err != nil {
 		return err
@@ -115,7 +115,7 @@ func patchSecret(cmd *cobra.Command, args []string) (err error) {
 		}
 	}
 
-	for k, v := range util.AssembleInputData(data) {
+	for k, v := range util.AssembleInputData(updateData) {
 		patchSecret.Data[k] = v
 	}
 

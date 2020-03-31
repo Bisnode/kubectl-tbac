@@ -19,7 +19,7 @@ type IdentityClaims struct {
 	jwt.StandardClaims
 }
 
-// CreateClientSet returns a kubernetes clientset.
+// CreateClientSet returns a kubernetes clientSet.
 func CreateClientSet() (*kubernetes.Clientset, error) {
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules,
@@ -29,8 +29,8 @@ func CreateClientSet() (*kubernetes.Clientset, error) {
 		return nil, errors.Wrap(err, "failed to load the kube config")
 	}
 
-	clientset, err := kubernetes.NewForConfig(config)
-	return clientset, errors.Wrap(err, "cannot initialize a kubernetes client with loaded configuration")
+	clientSet, err := kubernetes.NewForConfig(config)
+	return clientSet, errors.Wrap(err, "cannot initialize a kubernetes client with loaded configuration")
 }
 
 // WhoAmI ...

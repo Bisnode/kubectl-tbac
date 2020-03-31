@@ -16,12 +16,14 @@ limitations under the License.
 package cmd
 
 import (
-	"Bisnode/kubectl-tbac/util"
 	"fmt"
+	"os"
 
+	"github.com/mdanielolsson/kubectl-tbac/util"
 	"github.com/spf13/cobra"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
 // secretCmd represents the secret command
@@ -44,27 +46,25 @@ kubectl tbac create secret my-secret --namespace team-platform -d "USER=foo" -d 
 `,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := createSecret(cmd, args); err != nil {
+		clientSet, err := util.CreateClientSet()
+		if err != nil {
+			fmt.Printf("Failed to create clientSet: %v\n", err)
+			os.Exit(1)
+		}
+		if err := CreateSecret(clientSet, &args[0], data); err != nil {
 			fmt.Println(err)
 		}
 	},
 }
 
-func createSecret(cmd *cobra.Command, args []string) (err error) {
-	secretName := &args[0]
-
-	clientset, err := util.CreateClientSet()
-	if err != nil {
-		fmt.Printf("Failed to create client set: %v\n", err.Error())
-		return err
-	}
-
-	secretsClient := clientset.CoreV1().Secrets(namespace)
+// CreateSecret creates a secret in teams namespace
+func CreateSecret(clientSet kubernetes.Interface, secretName *string, data []string) (err error) {
+	secretsClient := clientSet.CoreV1().Secrets(Namespace)
 
 	newSecret := &v1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      *secretName,
-			Namespace: namespace,
+			Namespace: Namespace,
 			Labels: map[string]string{
 				"app": *secretName,
 			},
@@ -78,7 +78,7 @@ func createSecret(cmd *cobra.Command, args []string) (err error) {
 		return err
 	}
 
-	fmt.Printf("Created secret/%v in namespace %v\n", newSecret.Name, namespace)
+	fmt.Printf("Created secret/%v in namespace %v\n", newSecret.Name, Namespace)
 	return
 }
 

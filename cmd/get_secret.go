@@ -16,13 +16,23 @@ limitations under the License.
 package cmd
 
 import (
-	"Bisnode/kubectl-tbac/util"
 	"fmt"
+	"os"
 	"strings"
 
+	"github.com/mdanielolsson/kubectl-tbac/util"
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 )
+
+// SecretDescription holds data needed to describe a secret.
+type SecretDescription struct {
+	Namespace         string
+	Name              string
+	CreationTimestamp metav1.Time
+	Data              map[string][]byte
+}
 
 // getSecretCmd represents the getSecret command
 var getSecretCmd = &cobra.Command{
@@ -32,51 +42,85 @@ var getSecretCmd = &cobra.Command{
 	Short:   "Get a list of secrets or describe one.",
 	Long:    `List secrets in team namespace or describe one.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		getSecret(cmd, args)
+		clientSet, err := util.CreateClientSet()
+		if err != nil {
+			fmt.Printf("Failed to create clientSet: %v\n", err)
+			os.Exit(1)
+		}
+		if len(args) == 1 {
+			secretDesc, err := GetSecretDescription(clientSet, args[0])
+			if err != nil {
+				fmt.Printf("Failed to get secret %v: %v", args[0], err)
+				os.Exit(1)
+			}
+			secretDesc.PrettyPrintSecretDesc()
+			os.Exit(0)
+		}
+		secretList, err := GetSecretList(clientSet)
+		if err != nil {
+			fmt.Printf("Failed to get secrets: %v", err)
+			os.Exit(1)
+		}
+		for _, s := range secretList {
+			fmt.Printf(" * %v\n", s)
+		}
 	},
 }
 
-func getSecret(cmd *cobra.Command, args []string) (err error) {
-	clientset, err := util.CreateClientSet()
-	if err != nil {
-		fmt.Printf("Failed to create client set: %v\n", err.Error())
-		return err
-	}
-
-	listOpts := metav1.ListOptions{}
-	if len(args) > 0 {
-		listOpts = metav1.ListOptions{
-			FieldSelector: fmt.Sprintf("metadata.name=%v", args[0]),
+// PrettyPrintSecretDesc takes a secret and prints it out pretty
+func (s *SecretDescription) PrettyPrintSecretDesc() {
+	fmt.Printf("Namespace:\t%v\n", s.Namespace)
+	fmt.Printf("Secret name:\t%v\n", s.Name)
+	fmt.Printf("Created:\t%v\n", s.CreationTimestamp)
+	if len(s.Data) > 0 {
+		fmt.Println(strings.Repeat("-", 46))
+		for k, v := range s.Data {
+			fmt.Printf("%v:\n%v\n\n", k, string(v))
 		}
 	}
+}
 
-	secrets, err := clientset.
+// GetSecretList returns a list of secrets
+func GetSecretList(clientSet kubernetes.Interface) (secrets []string, err error) {
+	secretList, err := clientSet.
 		CoreV1().
-		Secrets(namespace).
-		List(listOpts)
+		Secrets(Namespace).
+		List(metav1.ListOptions{})
 
 	if err != nil {
-		fmt.Printf("Failed to list secrets in namespace %v: %v\n", namespace, err.Error())
-		return err
+		fmt.Printf("Failed to list secrets in namespace %v: %v\n", Namespace, err.Error())
+		return nil, err
 	}
+	for _, s := range secretList.Items {
+		secrets = append(secrets, s.Name)
+	}
+	return secrets, nil
+}
 
-	// Describe if secret is specified. Otherwise list them all.
-	if len(args) > 0 {
-		fmt.Printf("Namespace:\t%v\n", namespace)
-		fmt.Printf("Secret name:\t%v\n", secrets.Items[0].Name)
-		fmt.Printf("Created:\t%v\n", secrets.Items[0].CreationTimestamp)
-		if len(secrets.Items[0].Data) > 0 {
-			fmt.Println(strings.Repeat("-", 46))
-			for k, v := range secrets.Items[0].Data {
-				fmt.Printf("%v:\n%v\n\n", k, string(v))
-			}
-		}
-		return
+// GetSecretDescription takes a secret name as input and return description.
+func GetSecretDescription(clientSet kubernetes.Interface, secretName string) (secretDesc *SecretDescription, err error) {
+	listOpts := metav1.ListOptions{
+		FieldSelector: fmt.Sprintf("metadata.name=%v", secretName),
 	}
-	for _, s := range secrets.Items {
-		fmt.Printf(" * %v\n", s.Name)
+	secrets, err := clientSet.
+		CoreV1().
+		Secrets(Namespace).
+		List(listOpts)
+	if err != nil {
+		fmt.Printf("Failed to list secrets in namespace %v: %v\n", Namespace, err.Error())
+		return nil, err
 	}
-	return
+	data := make(map[string][]byte)
+	for k, v := range secrets.Items[0].Data {
+		data[k] = v
+	}
+	secretDesc = &SecretDescription{
+		Namespace:         Namespace,
+		Name:              secretName,
+		CreationTimestamp: secrets.Items[0].CreationTimestamp,
+		Data:              data,
+	}
+	return secretDesc, nil
 }
 
 func init() {

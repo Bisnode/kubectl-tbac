@@ -16,22 +16,24 @@ limitations under the License.
 package cmd
 
 import (
-	"Bisnode/kubectl-tbac/util"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/mdanielolsson/kubectl-tbac/util"
 	"github.com/spf13/cobra"
 )
 
+// Namespace in kubernetes.
+var Namespace string
+
 var (
-	cfgFile   string
-	namespace string
-	verbose   bool
-	lab       bool
-	sandbox   bool
-	teams     []string
-	data      []string
+	cfgFile string
+	verbose bool
+	lab     bool
+	sandbox bool
+	teams   []string
+	data    []string
 )
 
 var secretAliases = []string{
@@ -59,8 +61,8 @@ func init() {
 	// Global flags
 	rootCmd.PersistentFlags().BoolVarP(&lab, "lab", "", false, "Run lab to simulate team membership.")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().BoolVarP(&sandbox, "sandbox", "s", false, "Set if you want to work in a sandbox namespace.")
-	rootCmd.PersistentFlags().StringVarP(&namespace, "namespace", "n", "", "Namespace to create secret in. Usually only needed when member of more than one team.")
+	rootCmd.PersistentFlags().BoolVarP(&sandbox, "sandbox", "s", false, "Set if you want to work in a sandbox Namespace.")
+	rootCmd.PersistentFlags().StringVarP(&Namespace, "namespace", "n", "", "Namespace to create secret in. Usually only needed when member of more than one team.")
 
 	// Hide flags
 	rootCmd.PersistentFlags().MarkHidden("lab")
@@ -81,10 +83,10 @@ func identifyTeam() {
 	}
 
 	if len(teams) == 1 {
-		namespace = teams[0]
+		Namespace = teams[0]
 	}
 
-	if namespace == "" && len(teams) > 1 {
+	if Namespace == "" && len(teams) > 1 {
 		fmt.Println("You are member of multiple teams. Please use --namespace [team-name] to specify which namespace you want to work in.")
 		for _, team := range teams {
 			fmt.Println("-", team)
@@ -92,6 +94,6 @@ func identifyTeam() {
 		os.Exit(1)
 	}
 	if sandbox {
-		namespace = namespace + "-sandbox"
+		Namespace = Namespace + "-sandbox"
 	}
 }
