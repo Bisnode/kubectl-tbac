@@ -79,7 +79,9 @@ func identifyTeam() {
 	if lab {
 		teams = []string{"team-platform"}
 	} else {
-		teams = util.WhoAmI()
+		matchPrefix := "sec-tbac-team-"
+		trimPrefix := "sec-tbac-"
+		teams = util.WhoAmI(&matchPrefix, &trimPrefix)
 	}
 
 	if len(teams) == 1 {

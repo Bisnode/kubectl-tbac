@@ -56,14 +56,14 @@ kubectl tbac patch secret my-secret --remove-data USERNAME --remove-data PASSWOR
 			fmt.Printf("Failed to create clientSet: %v\n", err)
 			os.Exit(1)
 		}
-		if err := PatchSecret(clientSet, &args[0], removeData, data); err != nil {
+		if err := PatchSecret(clientSet, &args[0], &removeData, &data); err != nil {
 			fmt.Println(err)
 		}
 	},
 }
 
 // PatchSecret updates an already existing secret with patched content.
-func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData, updateData []string) (err error) {
+func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData, updateData *[]string) (err error) {
 	secretsClient := clientSet.CoreV1().Secrets(Namespace)
 
 	originalSecret, err := secretsClient.Get(*secretName, metav1.GetOptions{})
@@ -77,7 +77,7 @@ func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData,
 	patchSecret.ResourceVersion = ""
 
 	// If data to remove, remove from the patch version
-	for _, d := range removeData {
+	for _, d := range *removeData {
 		if originalSecret.Data[d] != nil {
 			delete(patchSecret.Data, d)
 		}
@@ -88,7 +88,7 @@ func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData,
 		the secret is first removed from Kubernetes and then recreated
 		without the unwanted keys.
 	*/
-	if len(removeData) != 0 {
+	if len(*removeData) != 0 {
 		if err := secretsClient.Delete(*secretName, &metav1.DeleteOptions{}); err != nil {
 			return err
 		}
@@ -115,7 +115,7 @@ func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData,
 		}
 	}
 
-	for k, v := range util.AssembleInputData(updateData) {
+	for k, v := range util.AssembleInputData(*updateData) {
 		patchSecret.Data[k] = v
 	}
 

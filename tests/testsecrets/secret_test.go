@@ -10,7 +10,6 @@ import (
 	"k8s.io/client-go/kubernetes/fake"
 )
 
-// TestGetSecretsList Tests listing secrets
 func TestGetSecretsList(t *testing.T) {
 	// create the 'fake' clientSet where clientSet.Interface = &Clientset{}, setting all the 'fake' methods
 	// as seen in https://github.com/kubernetes/client-go/blob/master/kubernetes/fake/clientSet_generated.go
@@ -98,7 +97,7 @@ func TestPatchSecret(t *testing.T) {
 		"URL=my-api.com",
 	}
 
-	err := cmd.PatchSecret(clientSet, &secretName, removeData, updateData)
+	err := cmd.PatchSecret(clientSet, &secretName, &removeData, &updateData)
 	if err != nil {
 		assert.Equal(t, nil, err)
 	}

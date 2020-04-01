@@ -67,7 +67,7 @@ var getSecretCmd = &cobra.Command{
 	},
 }
 
-// PrettyPrintSecretDesc takes a secret and prints it out pretty
+// PrettyPrintSecretDesc pretty prints a secret as a table view
 func (s *SecretDescription) PrettyPrintSecretDesc() {
 	fmt.Printf("Namespace:\t%v\n", s.Namespace)
 	fmt.Printf("Secret name:\t%v\n", s.Name)
@@ -80,7 +80,7 @@ func (s *SecretDescription) PrettyPrintSecretDesc() {
 	}
 }
 
-// GetSecretList returns a list of secrets
+// GetSecretList returns a list of secrets in the namespace
 func GetSecretList(clientSet kubernetes.Interface) (secrets []string, err error) {
 	secretList, err := clientSet.
 		CoreV1().
@@ -97,7 +97,7 @@ func GetSecretList(clientSet kubernetes.Interface) (secrets []string, err error)
 	return secrets, nil
 }
 
-// GetSecretDescription takes a secret name as input and return description.
+// GetSecretDescription takes a secret name as input and return it in a SecretDescription.
 func GetSecretDescription(clientSet kubernetes.Interface, secretName string) (secretDesc *SecretDescription, err error) {
 	listOpts := metav1.ListOptions{
 		FieldSelector: fmt.Sprintf("metadata.name=%v", secretName),
