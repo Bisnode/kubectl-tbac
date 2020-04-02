@@ -1,4 +1,5 @@
 # kubectl-tbac
+![Go](https://github.com/mdanielolsson/kubectl-tbac/workflows/Go/badge.svg)
 
 This is a kubectl plugin that is built to simplify creating resources in a team's namespace.
 
