@@ -26,6 +26,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+var container string
+
 // secretCmd represents the secret command
 var createSecretCmd = &cobra.Command{
 	Use:     "secret [name] [flags]",
@@ -43,6 +45,9 @@ kubectl tbac create secret my-secret --data "USERNAME=foo" --data "PASSWORD=bar"
 
 # Create a secret using namespace
 kubectl tbac create secret my-secret --namespace team-platform -d "USER=foo" -d "PWD=bar"
+
+# Create a secret for a sidecar named opa
+kubectl tbac create secret my-secret --container opa -d "USER=foo" -d "PWD=bar"
 `,
 
 	Run: func(cmd *cobra.Command, args []string) {
@@ -51,22 +56,23 @@ kubectl tbac create secret my-secret --namespace team-platform -d "USER=foo" -d 
 			fmt.Printf("Failed to create clientSet: %v\n", err)
 			os.Exit(1)
 		}
-		if err := CreateSecret(clientSet, &args[0], data); err != nil {
+		if err := CreateSecret(clientSet, &args[0], &container, data); err != nil {
 			fmt.Println(err)
 		}
 	},
 }
 
 // CreateSecret creates a secret in teams namespace
-func CreateSecret(clientSet kubernetes.Interface, secretName *string, data []string) (err error) {
+func CreateSecret(clientSet kubernetes.Interface, secretName, container *string, data []string) (err error) {
 	secretsClient := clientSet.CoreV1().Secrets(Namespace)
 
 	newSecret := &v1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      *secretName,
+			Name:      *secretName + "-" + *container,
 			Namespace: Namespace,
 			Labels: map[string]string{
-				"app": *secretName,
+				"app":       *secretName,
+				"container": *container,
 			},
 		},
 		Data: util.AssembleInputData(data),
@@ -85,4 +91,5 @@ func CreateSecret(clientSet kubernetes.Interface, secretName *string, data []str
 func init() {
 	createCmd.AddCommand(createSecretCmd)
 	createSecretCmd.Flags().StringArrayVarP(&data, "data", "d", []string{}, "Data to add to secret")
+	createSecretCmd.Flags().StringVarP(&container, "container", "c", "default", "Which container to create secret for. Only set this if you want to create a secret for a sidecar. (Default: \"default\"")
 }

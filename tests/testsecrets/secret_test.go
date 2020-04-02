@@ -121,15 +121,16 @@ func TestCreateSecret(t *testing.T) {
 	cmd.Namespace = "default"
 
 	secretName := "new-app-secret"
+	container := "default"
 	data := []string{
 		"USERNAME=foo",
 		"PASSWORD=bar",
 	}
-	err := cmd.CreateSecret(clientSet, &secretName, data)
+	err := cmd.CreateSecret(clientSet, &secretName, &container, data)
 	if err != nil {
 		assert.Equal(t, nil, err)
 	}
-	createdSecret, err := clientSet.CoreV1().Secrets(cmd.Namespace).Get("new-app-secret", metav1.GetOptions{})
+	createdSecret, err := clientSet.CoreV1().Secrets(cmd.Namespace).Get("new-app-secret-default", metav1.GetOptions{})
 	if err != nil {
 		assert.Equal(t, nil, err)
 	}
