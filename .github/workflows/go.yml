@@ -24,9 +24,14 @@ jobs:
             dep ensure
         fi
     - name: Run tests
-      run: go test ./...
-    - name: Build for Linux
+      run: go test -v ./...
+    - name: Build kubectl-tbac Linux binary
       run: go build -v .
       env:
           GOOS: linux
           GOARCH: amd64
+    - name: Upload kubectl-tbac Linux binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: kubectl-login-linux
+        path: dist/linux/amd64/kubectl-tbac
