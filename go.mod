@@ -1,4 +1,4 @@
-module github.com/mdanielolsson/kubectl-tbac
+module github.com/Bisnode/kubectl-tbac
 
 go 1.14
 

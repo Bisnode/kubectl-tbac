@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mdanielolsson/kubectl-tbac/util"
+	"github.com/Bisnode/kubectl-tbac/util"
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"

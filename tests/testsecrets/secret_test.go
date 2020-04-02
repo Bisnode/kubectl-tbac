@@ -3,8 +3,8 @@ package testsecrets
 import (
 	"testing"
 
-	"github.com/mdanielolsson/kubectl-tbac/cmd"
-	"github.com/mdanielolsson/kubectl-tbac/tests/testdata"
+	"github.com/Bisnode/kubectl-tbac/cmd"
+	"github.com/Bisnode/kubectl-tbac/tests/testdata"
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/fake"

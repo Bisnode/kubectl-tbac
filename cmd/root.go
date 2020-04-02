@@ -20,7 +20,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/mdanielolsson/kubectl-tbac/util"
+	"github.com/Bisnode/kubectl-tbac/util"
 	"github.com/spf13/cobra"
 )
 
