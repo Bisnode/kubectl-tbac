@@ -30,8 +30,28 @@ jobs:
       env:
           GOOS: linux
           GOARCH: amd64
+    - name: Build kubectl-tbac Mac binary
+      run: go build -o dist/darwin/amd64/kubectl-tbac
+      env:
+        GOOS: darwin
+        GOARCH: amd64
+    - name: Build kubectl-tbac Windows binary
+      run: go build -o dist/windows/amd64/kubectl-tbac.exe
+      env:
+        GOOS: windows
+        GOARCH: amd64
     - name: Upload kubectl-tbac Linux binary
       uses: actions/upload-artifact@v1
       with:
-        name: kubectl-login-linux
+        name: kubectl-tbac-linux
         path: dist/linux/amd64/kubectl-tbac
+    - name: Upload kubectl-tbac Mac OS binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: kubectl-tbac-macos
+        path: dist/darwin/amd64/kubectl-tbac
+    - name: Upload kubectl-tbac Windows binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: kubectl-tbac-windows
+        path: dist/windows/amd64/kubectl-tbac.exe
