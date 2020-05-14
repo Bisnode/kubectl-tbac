@@ -119,6 +119,11 @@ func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData,
 		patchSecret.Data[k] = v
 	}
 
+	if patchSecret.Annotations == nil {
+		patchSecret.Annotations = make(map[string]string)
+	}
+
+	patchSecret.Annotations["tbac.bisnode.com/last-modified"] = fmt.Sprintf("%v", metav1.Now().Rfc3339Copy())
 	patch, err := json.Marshal(patchSecret)
 	if err != nil {
 		return err

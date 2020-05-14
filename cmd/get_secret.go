@@ -31,6 +31,9 @@ type SecretDescription struct {
 	Namespace         string
 	Name              string
 	CreationTimestamp metav1.Time
+	LastUpdated       string
+	Service           string
+	Container         string
 	Data              map[string][]byte
 }
 
@@ -69,13 +72,16 @@ var getSecretCmd = &cobra.Command{
 
 // PrettyPrintSecretDesc pretty prints a secret as a table view
 func (s *SecretDescription) PrettyPrintSecretDesc() {
-	fmt.Printf("Namespace:\t%v\n", s.Namespace)
-	fmt.Printf("Secret name:\t%v\n", s.Name)
-	fmt.Printf("Created:\t%v\n", s.CreationTimestamp)
+	fmt.Printf("Secret name:%v%v\n", strings.Repeat(" ", 25-len("Secret Name:")), s.Name)
+	fmt.Printf("Service (app label):%v%v\n", strings.Repeat(" ", 25-len("Service (app label):")), s.Service)
+	fmt.Printf("Container:%v%v\n", strings.Repeat(" ", 25-len("Container:")), s.Container)
+	fmt.Printf("Namespace:%v%v\n", strings.Repeat(" ", 25-len("Namespace:")), s.Namespace)
+	fmt.Printf("Created:%v%v\n", strings.Repeat(" ", 25-len("Created:")), s.CreationTimestamp)
+	fmt.Printf("Last updated:%v%v\n\n", strings.Repeat(" ", 25-len("Last updated:")), s.LastUpdated)
 	if len(s.Data) > 0 {
-		fmt.Println(strings.Repeat("-", 46))
+		fmt.Println(strings.Repeat("-", 25), "DATA", strings.Repeat("-", 25))
 		for k, v := range s.Data {
-			fmt.Printf("%v:\n%v\n\n", k, string(v))
+			fmt.Printf("%v=%v\n", k, string(v))
 		}
 	}
 }
@@ -117,6 +123,9 @@ func GetSecretDescription(clientSet kubernetes.Interface, secretName string) (se
 	secretDesc = &SecretDescription{
 		Namespace:         Namespace,
 		Name:              secretName,
+		LastUpdated:       secrets.Items[0].Annotations["tbac.bisnode.com/last-modified"],
+		Service:           secrets.Items[0].Labels["app"],
+		Container:         secrets.Items[0].Labels["tbac.bisnode.com/container"],
 		CreationTimestamp: secrets.Items[0].CreationTimestamp,
 		Data:              data,
 	}
