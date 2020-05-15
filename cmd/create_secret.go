@@ -75,6 +75,9 @@ func CreateSecret(clientSet kubernetes.Interface, secretName, container *string,
 				"tbac.bisnode.com/container": *container,
 				"tbac.bisnode.com/sandbox":   fmt.Sprintf("%v", sandbox),
 			},
+			Annotations: map[string]string{
+				"tbac.bisnode.com/last-modified": fmt.Sprintf("%v", metav1.Now().Rfc3339Copy()),
+			},
 		},
 		Data: util.AssembleInputData(data),
 	}
