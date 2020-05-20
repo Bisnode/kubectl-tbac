@@ -91,7 +91,9 @@ func GetSecretList(clientSet kubernetes.Interface) (secrets []string, err error)
 	secretList, err := clientSet.
 		CoreV1().
 		Secrets(Namespace).
-		List(metav1.ListOptions{})
+		List(metav1.ListOptions{
+			FieldSelector: fmt.Sprintf("type=Opaque"),
+		})
 
 	if err != nil {
 		fmt.Printf("Failed to list secrets in namespace %v: %v\n", Namespace, err.Error())
