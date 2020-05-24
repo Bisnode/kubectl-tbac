@@ -27,6 +27,9 @@ import (
 // Namespace in kubernetes.
 var Namespace string
 
+// Context name
+var Context string
+
 var (
 	cfgFile string
 	verbose bool
@@ -63,6 +66,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVarP(&sandbox, "sandbox", "s", false, "Set if you want to work in a sandbox Namespace.")
 	rootCmd.PersistentFlags().StringVarP(&Namespace, "namespace", "n", "", "Namespace to create secret in. Usually only needed when member of more than one team.")
+	rootCmd.PersistentFlags().StringVarP(&Context, "context", "", "", "Set context name.")
 
 	// Hide flags
 	rootCmd.PersistentFlags().MarkHidden("lab")
@@ -81,7 +85,7 @@ func identifyTeam() {
 	} else {
 		matchPrefix := "sec-tbac-team-"
 		trimPrefix := "sec-tbac-"
-		teams = util.WhoAmI(&matchPrefix, &trimPrefix)
+		teams = util.WhoAmI(&matchPrefix, &trimPrefix, &Context)
 	}
 
 	if len(teams) == 1 {

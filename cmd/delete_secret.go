@@ -43,7 +43,7 @@ kubectl tbac delete secret my-secret"
 kubectl tbac delete secret my-secret --namespace team-platform"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		clientSet, err := util.CreateClientSet()
+		clientSet, err := util.CreateClientSet(&Context)
 		if err != nil {
 			fmt.Printf("Failed to create clientSet: %v\n", err)
 			os.Exit(1)

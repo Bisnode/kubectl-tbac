@@ -51,7 +51,7 @@ kubectl tbac patch secret my-secret --namespace team-platform -d "USER=foo" -d "
 kubectl tbac patch secret my-secret --remove-data USERNAME --remove-data PASSWORD
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		clientSet, err := util.CreateClientSet()
+		clientSet, err := util.CreateClientSet(&Context)
 		if err != nil {
 			fmt.Printf("Failed to create clientSet: %v\n", err)
 			os.Exit(1)
@@ -113,6 +113,10 @@ func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData,
 			}
 			return fmt.Errorf("Errors during recreation - Can't continue")
 		}
+	}
+
+	if patchSecret.Data == nil {
+		patchSecret.Data = make(map[string][]byte)
 	}
 
 	for k, v := range util.AssembleInputData(*updateData) {
