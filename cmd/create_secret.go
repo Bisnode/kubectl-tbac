@@ -27,6 +27,7 @@ import (
 )
 
 var container string
+var app string
 
 // secretCmd represents the secret command
 var createSecretCmd = &cobra.Command{
@@ -51,7 +52,7 @@ kubectl tbac create secret my-secret --container opa -d "USER=foo" -d "PWD=bar"
 `,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		clientSet, err := util.CreateClientSet()
+		clientSet, err := util.CreateClientSet(&Context)
 		if err != nil {
 			fmt.Printf("Failed to create clientSet: %v\n", err)
 			os.Exit(1)
@@ -65,13 +66,18 @@ kubectl tbac create secret my-secret --container opa -d "USER=foo" -d "PWD=bar"
 // CreateSecret creates a secret in teams namespace
 func CreateSecret(clientSet kubernetes.Interface, secretName, container *string, data []string) (err error) {
 	secretsClient := clientSet.CoreV1().Secrets(Namespace)
+	appLabel := *secretName
+
+	if app != "" {
+		appLabel = app
+	}
 
 	newSecret := &v1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      *secretName + "-" + *container,
 			Namespace: Namespace,
 			Labels: map[string]string{
-				"app":                        *secretName,
+				"app":                        appLabel,
 				"tbac.bisnode.com/container": *container,
 				"tbac.bisnode.com/sandbox":   fmt.Sprintf("%v", sandbox),
 			},
@@ -96,4 +102,5 @@ func init() {
 	createCmd.AddCommand(createSecretCmd)
 	createSecretCmd.Flags().StringArrayVarP(&data, "data", "d", []string{}, "Data to add to secret")
 	createSecretCmd.Flags().StringVarP(&container, "container", "c", "default", "Which container to create secret for. Only set this if you want to create a secret for a sidecar. (Default: \"default\"")
+	createSecretCmd.Flags().StringVarP(&app, "app", "a", "", "Set the app label different than the secret name. Note that the app label must match the app label on the service that should use this secret.")
 }

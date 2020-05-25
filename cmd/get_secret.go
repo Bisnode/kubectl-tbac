@@ -45,7 +45,7 @@ var getSecretCmd = &cobra.Command{
 	Short:   "Get a list of secrets or describe one.",
 	Long:    `List secrets in team namespace or describe one.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		clientSet, err := util.CreateClientSet()
+		clientSet, err := util.CreateClientSet(&Context)
 		if err != nil {
 			fmt.Printf("Failed to create clientSet: %v\n", err)
 			os.Exit(1)
@@ -102,6 +102,10 @@ func GetSecretList(clientSet kubernetes.Interface) (secrets []string, err error)
 	for _, s := range secretList.Items {
 		secrets = append(secrets, s.Name)
 	}
+
+	if len(secretList.Items) == 0 {
+		fmt.Println("No resources found.")
+	}
 	return secrets, nil
 }
 
@@ -114,10 +118,20 @@ func GetSecretDescription(clientSet kubernetes.Interface, secretName string) (se
 		CoreV1().
 		Secrets(Namespace).
 		List(listOpts)
+
 	if err != nil {
 		fmt.Printf("Failed to list secrets in namespace %v: %v\n", Namespace, err.Error())
 		return nil, err
 	}
+
+	// Due to an issue with the ListOptions filters in
+	// kubernetes fake-client that is used for testing
+	// we cannot check for exactly one result
+	if len(secrets.Items) < 1 {
+		err := fmt.Errorf("Secret not found: %v/%v\n", Namespace, secretName)
+		return nil, err
+	}
+
 	data := make(map[string][]byte)
 	for k, v := range secrets.Items[0].Data {
 		data[k] = v
