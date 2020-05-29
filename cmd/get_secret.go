@@ -30,7 +30,7 @@ import (
 type SecretDescription struct {
 	Namespace         string
 	Name              string
-	CreationTimestamp metav1.Time
+	CreationTimestamp string
 	LastUpdated       string
 	Service           string
 	Container         string
@@ -128,7 +128,7 @@ func GetSecretDescription(clientSet kubernetes.Interface, secretName string) (se
 	// kubernetes fake-client that is used for testing
 	// we cannot check for exactly one result
 	if len(secrets.Items) < 1 {
-		err := fmt.Errorf("Secret not found: %v/%v\n", Namespace, secretName)
+		err := fmt.Errorf("Secret not found: %v/%v", Namespace, secretName)
 		return nil, err
 	}
 
@@ -140,9 +140,9 @@ func GetSecretDescription(clientSet kubernetes.Interface, secretName string) (se
 		Namespace:         Namespace,
 		Name:              secretName,
 		LastUpdated:       secrets.Items[0].Annotations["tbac.bisnode.com/last-modified"],
+		CreationTimestamp: secrets.Items[0].Annotations["tbac.bisnode.com/time-created"],
 		Service:           secrets.Items[0].Labels["app"],
 		Container:         secrets.Items[0].Labels["tbac.bisnode.com/container"],
-		CreationTimestamp: secrets.Items[0].CreationTimestamp,
 		Data:              data,
 	}
 	return secretDesc, nil

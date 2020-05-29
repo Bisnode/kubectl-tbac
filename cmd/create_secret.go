@@ -83,6 +83,7 @@ func CreateSecret(clientSet kubernetes.Interface, secretName, container *string,
 			},
 			Annotations: map[string]string{
 				"tbac.bisnode.com/last-modified": fmt.Sprintf("%v", metav1.Now().Rfc3339Copy()),
+				"tbac.bisnode.com/time-created":  fmt.Sprintf("%v", metav1.Now().Rfc3339Copy()),
 			},
 		},
 		Data: util.AssembleInputData(data),
