@@ -49,3 +49,11 @@ kubectl tbac delete secret my-secret
 ```
 
 *All commands accepts a --[h]elp flag for more information and examples.*
+
+# Known issues
+There is a problem where the plugin fails to find out which namespace some users belong to. If you get errors like `Error from server (Forbidden)` - then you know this is happening to you.
+
+Make sure you have the latest version of the plugin!
+
+If the issue remains with the latest version of the plugin, the workaround is to alawys pass the `-n <team-name>` flag on each command.
+If you are unsure what your team namespace is called, run `kubectl get namespaces` to list all and find yours.
