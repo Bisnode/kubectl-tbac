@@ -31,12 +31,13 @@ var Namespace string
 var Context string
 
 var (
-	cfgFile string
-	verbose bool
-	lab     bool
-	sandbox bool
-	teams   []string
-	data    []string
+	cfgFile       string
+	namespaceFlag string
+	verbose       bool
+	lab           bool
+	sandbox       bool
+	teams         []string
+	data          []string
 )
 
 var secretAliases = []string{
@@ -65,7 +66,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&lab, "lab", "", false, "Run lab to simulate team membership.")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVarP(&sandbox, "sandbox", "s", false, "Set if you want to work in a sandbox Namespace.")
-	rootCmd.PersistentFlags().StringVarP(&Namespace, "namespace", "n", "", "Namespace to create secret in. Usually only needed when member of more than one team.")
+	rootCmd.PersistentFlags().StringVarP(&namespaceFlag, "namespace", "n", "", "Namespace to create secret in. Usually only needed when member of more than one team.")
 	rootCmd.PersistentFlags().StringVarP(&Context, "context", "", "", "Set context name.")
 
 	// Hide flags
@@ -101,5 +102,10 @@ func identifyTeam() {
 	}
 	if sandbox {
 		Namespace = Namespace + "-sandbox"
+	}
+
+	// Override namespace if provided with --namespace flag.
+	if namespaceFlag != "" {
+		Namespace = namespaceFlag
 	}
 }
