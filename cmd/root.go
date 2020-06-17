@@ -81,6 +81,13 @@ Still not that generic that they fit in utils.
 // identifyTeam sets namespace based on team in access token.
 // If sandbox is set, then appending namespace with "-sandbox"
 func identifyTeam() {
+
+	// Override namespace if provided with --namespace flag.
+	if namespaceFlag != "" {
+		Namespace = namespaceFlag
+		return
+	}
+
 	if lab {
 		teams = []string{"team-platform"}
 	} else {
@@ -102,10 +109,5 @@ func identifyTeam() {
 	}
 	if sandbox {
 		Namespace = Namespace + "-sandbox"
-	}
-
-	// Override namespace if provided with --namespace flag.
-	if namespaceFlag != "" {
-		Namespace = namespaceFlag
 	}
 }
