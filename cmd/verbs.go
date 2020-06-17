@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
@@ -59,9 +61,19 @@ var createCmd = &cobra.Command{
 	},
 }
 
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Show version of kubectl-tbac",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("v%v\n", version)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(createCmd)
 	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(patchCmd)
 	rootCmd.AddCommand(getCmd)
+	rootCmd.AddCommand(versionCmd)
 }
