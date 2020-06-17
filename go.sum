@@ -13,6 +13,8 @@ github.com/Bisnode/kubectl-login v1.0.0/go.mod h1:099bQg9Dwjv4vr/9pVHLoSpuTdJvJq
 github.com/Bisnode/kubectl-login v1.0.1/go.mod h1:kXTbsE6lQp9tQGyOwDbjxw/1uE+mI+JZYcH4rDKkQPY=
 github.com/Bisnode/kubectl-login v1.1.0 h1:rB4yb8nQA2UARLPv/QUyzu8YSzd2eMjTM3P60QZBhjw=
 github.com/Bisnode/kubectl-login v1.1.0/go.mod h1:kXTbsE6lQp9tQGyOwDbjxw/1uE+mI+JZYcH4rDKkQPY=
+github.com/Bisnode/kubectl-login v1.1.1 h1:TqyEO2IpbsGu4DTGh+NQSqFE1o5Dqwoh4zJSqrYgK3w=
+github.com/Bisnode/kubectl-login v1.1.1/go.mod h1:RM5MTMWFXYy+jSDTOTZGh/Ro1DmOP+98eQqo8is/MQE=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
