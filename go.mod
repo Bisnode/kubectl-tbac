@@ -12,8 +12,8 @@ require (
 	golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9 // indirect
 	golang.org/x/net v0.0.0-20200602114024-627f9648deb9 // indirect
 	golang.org/x/sys v0.0.0-20200615200032-f1bc736245b1 // indirect
-	k8s.io/api v0.15.11
-	k8s.io/apimachinery v0.17.0
+	k8s.io/api v0.18.4
+	k8s.io/apimachinery v0.18.4
 	k8s.io/client-go v11.0.0+incompatible
 	k8s.io/utils v0.0.0-20200603063816-c1c6865ac451 // indirect
 )
