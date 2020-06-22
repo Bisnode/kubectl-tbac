@@ -6,7 +6,7 @@ This is a kubectl plugin that is built to simplify creating resources in a team'
 Use of this plugin requires no previous knowledge of Kubernetes manifests and namespaces. A team member can be sure that the resource is created with the correct labels, using the correct requirements for the Kubernetes API and that it ends up in the right place in Kubernetes.
 The plugin makes use of the ID token in the kubeconfig to figure out which team the user belong to.
 
-Currently supported resources:
+Currently supported resource types:
 * Secrets
 
 # Install
