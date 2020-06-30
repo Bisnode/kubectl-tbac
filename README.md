@@ -30,7 +30,7 @@ kubectl tbac create secret my-secret --data "USERNAME=foo" --data "PASSWORD=bar"
 
 Update secret
 ```
-kubectl tbac create secret my-secret --data "URL=github.com" --data "USERNAME=bar" --remove-data "PASSWORD"
+kubectl tbac patch secret my-secret --data "URL=github.com" --data "USERNAME=bar" --remove-data "PASSWORD"
 ```
 
 List secrets
