@@ -64,6 +64,10 @@ kubectl tbac patch secret my-secret --remove-data USERNAME --remove-data PASSWOR
 
 // PatchSecret updates an already existing secret with patched content.
 func PatchSecret(clientSet kubernetes.Interface, secretName *string, removeData, updateData *[]string) (err error) {
+	if len(*removeData) == 0 && len(*updateData) == 0 {
+		return fmt.Errorf("No patch data provided")
+	}
+
 	secretsClient := clientSet.CoreV1().Secrets(Namespace)
 
 	originalSecret, err := secretsClient.Get(*secretName, metav1.GetOptions{})
