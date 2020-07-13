@@ -37,6 +37,8 @@ type SecretDescription struct {
 	Data              map[string][]byte
 }
 
+var export bool
+
 // getSecretCmd represents the getSecret command
 var getSecretCmd = &cobra.Command{
 	Use:     "secret [name]",
@@ -55,6 +57,10 @@ var getSecretCmd = &cobra.Command{
 			if err != nil {
 				fmt.Printf("Failed to get secret %v: %v", args[0], err)
 				os.Exit(1)
+			}
+			if export {
+				secretDesc.ExportSecret()
+				os.Exit(0)
 			}
 			secretDesc.PrettyPrintSecretDesc()
 			os.Exit(0)
@@ -84,6 +90,21 @@ func (s *SecretDescription) PrettyPrintSecretDesc() {
 			fmt.Printf("%v=%v\n", k, string(v))
 		}
 	}
+}
+
+// ExportSecret prints out secret in exported format.
+func (s *SecretDescription) ExportSecret() {
+	// Trim away container from name if found..
+
+	name := strings.TrimSuffix(s.Name, "-"+s.Container)
+
+	var d []string
+	for k, v := range s.Data {
+		d = append(d, fmt.Sprintf("--data '%v=%v'", string(k), string(v)))
+	}
+	data := strings.Join(d, " ")
+	out := fmt.Sprintf("kubectl tbac create secret %v --namespace %v %v", name, s.Namespace, data)
+	fmt.Printf("%v\n\n", out)
 }
 
 // GetSecretList returns a list of secrets in the namespace
@@ -150,4 +171,5 @@ func GetSecretDescription(clientSet kubernetes.Interface, secretName string) (se
 
 func init() {
 	getCmd.AddCommand(getSecretCmd)
+	getSecretCmd.PersistentFlags().BoolVarP(&export, "export", "", false, "Export as a `kubectl create secret` command")
 }
