@@ -33,7 +33,6 @@ var Namespace string
 var Context string
 
 var (
-	cfgFile       string
 	namespaceFlag string
 	verbose       bool
 	lab           bool
@@ -72,7 +71,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&Context, "context", "", "", "Set context name.")
 
 	// Hide flags
-	rootCmd.PersistentFlags().MarkHidden("lab")
+	_ = rootCmd.PersistentFlags().MarkHidden("lab")
 }
 
 /* ---------------------------------------------

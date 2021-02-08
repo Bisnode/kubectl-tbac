@@ -48,7 +48,11 @@ kubectl tbac delete secret my-secret --namespace team-platform"
 			fmt.Printf("Failed to create clientSet: %v\n", err)
 			os.Exit(1)
 		}
-		DeleteSecret(clientSet, args[0])
+		err = DeleteSecret(clientSet, args[0])
+		if err != nil {
+			fmt.Printf("Failed to delete secret: %v\n", err)
+			os.Exit(1)
+		}
 	},
 }
 
