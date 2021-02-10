@@ -1,0 +1,15 @@
+# To use in local development:
+# - Run `pip3 install pre-commit` (or `brew install pre-commit`)
+# - In the project root directory (where this file resides) run: `pre-commit install`
+# - Done! The below hooks should now automatically run before commit (where applicable).
+repos:
+- repo: git://github.com/dnephin/pre-commit-golang
+  rev: master
+  hooks:
+    - id: go-fmt
+    - id: go-lint
+    - id: go-imports
+    - id: validate-toml
+    - id: golangci-lint
+    - id: go-unit-tests
+    - id: go-build
