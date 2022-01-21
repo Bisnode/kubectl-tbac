@@ -1,8 +1,8 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/Azure/go-autorest v11.1.2+incompatible/go.mod h1:r+4oMnoxhatjLLJ6zxSWATqVooLgysK6ZNox3g/xq24=
-github.com/Bisnode/kubectl-login v1.2.0 h1:MQ+Jtc7dY13I8GN+5N6DrOIyPtaTuDRDLCMBQC4zpKQ=
-github.com/Bisnode/kubectl-login v1.2.0/go.mod h1:il9d9jXfa64KbA4ULejFefSRewiIPZKVFVrfiZIfv+k=
+github.com/Bisnode/kubectl-login v1.2.1 h1:+VuMX4EVxn7TFba1VdrIHOLslRBfGMg6cJ72W0UpfMg=
+github.com/Bisnode/kubectl-login v1.2.1/go.mod h1:il9d9jXfa64KbA4ULejFefSRewiIPZKVFVrfiZIfv+k=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
