@@ -13,6 +13,19 @@ jobs:
       id: go
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+    - name: Get Next Tag
+      id: tag_version
+      uses: SOLIDSoftworks/semver-tags@1.0.1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+        tag-prefix: 'v'
+        dry-run: true
+    - name: Update Tbac Version
+      env:
+       TBAC_VERSION: ${{ steps.tag_version.outputs.semantic-version }}
+      run: |
+        CURRENT_VERSION=$(cat cmd/root.go | grep version | tr -d \" | awk -F ' ' '{print $NF}')
+        sed -i "s/$CURRENT_VERSION/$TBAC_VERSION/" cmd/root.go
     - name: Get dependencies
       run: |
         go get -v -t -d ./...
@@ -43,14 +56,6 @@ jobs:
       env:
         GOOS: windows
         GOARCH: amd64
-    - name: Get Next Tag
-      id: tag_version
-      uses: SOLIDSoftworks/semver-tags@1.0.1
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
-        tag-prefix: 'v'
-        dry-run: true
-      if: github.ref_name == 'master'
     - name: Create New Release
       id: create_release
       uses: actions/create-release@v1
