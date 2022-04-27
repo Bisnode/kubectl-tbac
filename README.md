@@ -10,7 +10,28 @@ Currently supported resource types:
 * Secrets
 
 # Install
-Download the kubectl-tbac binary and place it in your $PATH.
+Download the kubectl-tbac binary from [releases](https://github.com/Bisnode/kubectl-tbac/releases) 
+Place binary in directory for example kubectl-tbac 
+
+### For MacOS/Linux:
+
+You can add it to your $PATH in ~/.bash_profile or ~/.profile
+
+```
+    export KUBECTL_TBAC="$HOME/kubectl-tbac"
+    PATH=$PATH:$KUBECTL_TBAC
+    export PATH
+```
+
+reload: source ~/.bash_profile
+
+### For Windows:
+
+Add system variable KUBECTL_TBAC with path to kubectl-tbac directory containing binary
+Add to Path %KUBECTL_TBAC%
+
+### Test it:
+
 Once in your $PATH you can start using `kubectl tbac`.
 
 # Build
