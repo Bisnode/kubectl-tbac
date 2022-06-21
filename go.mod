@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/Bisnode/kubectl-login v1.2.2
 	github.com/pkg/errors v0.9.1
-	github.com/spf13/cobra v1.4.0
+	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.7.1
 	k8s.io/api v0.15.11
 	k8s.io/apimachinery v0.19.4
